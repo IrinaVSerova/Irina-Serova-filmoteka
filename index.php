@@ -1,3 +1,45 @@
+<?php 
+
+	$link = mysqli_connect('localhost', 'root', '', 'filmoteka');
+
+	if ( mysqli_connect_error() ) {
+		die("Ошибка подключения к базе данных.");
+	}
+	
+	if (array_key_exists('add-film', $_POST)) {
+
+		$query = "INSERT INTO `films` (`title`, `genre`, `year`) VALUES (
+		'". mysqli_real_escape_string($link, $_POST['title']) ."',
+		'". mysqli_real_escape_string($link, $_POST['genre']) ."',
+		'". mysqli_real_escape_string($link, $_POST['year']) ."'
+		)";
+
+		if ( mysqli_query($link, $query) ) {
+		 	echo "<p>Фильм был успешно добавлен</p>";
+		 } else {
+		 	echo "<p>Что-то пошло не так. Попробуйте еще раз.</p>";
+		 }
+	}
+
+	// echo "<pre>";
+	// print_r($_POST);
+	// echo "<br>";
+
+	$query = "SELECT * FROM `films`";
+	$films = array();
+
+	$result = mysqli_query($link, $query);
+
+	if ($result = mysqli_query($link, $query) ) {
+
+		while ( $row = mysqli_fetch_array($result) ) {
+			$films[] = $row;
+
+		}
+	} 
+	
+	
+?>
 
 <!-- Разные миксины по одному, которые понадобятся. Для логотипа, бейджа, и т.д.-->
 <!DOCTYPE html>
@@ -17,75 +59,23 @@
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800&amp;subset=cyrillic-ext" rel="stylesheet">
 	<!--[if lt IE 9]><script src="http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script><![endif]-->
 </head>
-
-<?php 
-
-	$link = mysqli_connect('localhost', 'root', '', 'filmoteka');
-
-	if ( mysqli_connect_error() ) {
-		die("Ошибка подключения к базе данных.");
-	}
-	
-	if (array_key_exists('add-film', $_POST)) {
-		
-
-
-		$query = "INSERT INTO films (title, genre, year) VALUES (
-		'". mysqli_real_escape_string($link, $_POST['title']) ."',
-		'". mysqli_real_escape_string($link, $_POST['genre']) ."',
-		'". mysqli_real_escape_string($link, $_POST['year']) ."'
-		)";
-
-		if ( mysqli_query($link, $query) ) {
-		 	echo "<p>Фильм был успешно добавлен</p>";
-		 } else {
-		 	echo "<p>Что-то пошло не так. Попробуйте еще раз.</p>";
-		 }
-	}
-
-	// echo "<pre>";
-	// print_r($_POST);
-	// echo "<br>";
-
-	$query = "SELECT * FROM films";
-	$films = array();
-
-	$result = mysqli_query($link, $query);
-
-	if ($result = mysqli_query($link, $query) ) {
-
-		while ( $row = mysqli_fetch_array($result) ) {
-			$films[] = $row;
-
-		}
-	} 
-	
-	
-?>
-
-
-
 <body class="index-page">
 	<div class="container user-content section-page">
 		<div class="title-1">Фильмотека</div>
 		<?php 
-			foreach ($films as $key => $value) {
-				print_r($value);
-
-				echo '<br>';
-			}
-
-		?>
+			foreach ($films as $key => $film) { ?>
 		<div class="card mb-20">
-			<h4 class="title-4"><?=$films[0]['title']?></h4>
-			<div class="badge"><?=$films[0]['genre']?></div>
-			<div class="badge"><?=$films[0]['year']?></div>
+			<h4 class="title-4"><?=$films[$key]['title']?></h4>
+			<div class="badge"><?=$films[$key]['genre']?></div>
+			<div class="badge"><?=$films[$key]['year']?></div>
 		</div>
-		<div class="card mb-20">
-			<h4 class="title-4"><?=$films[1]['title']?></h4>
-			<div class="badge"><?=$films[1]['genre']?></div>
-			<div class="badge"><?=$films[1]['year']?></div>
-		</div>
+		<?php }	?>
+		<!-- <div class="card mb-20">
+			<h4 class="title-4"></h4>
+			<div class="badge"></div>
+			<div class="badge"></div>
+		</div> -->
+		
 		<div class="panel-holder mt-80 mb-40">
 			<div class="title-3 mt-0">Добавить фильм</div>
 			<form action="index.php" method="POST">
