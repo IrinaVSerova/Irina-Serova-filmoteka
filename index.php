@@ -5,25 +5,38 @@
 	if ( mysqli_connect_error() ) {
 		die("Ошибка подключения к базе данных.");
 	}
+
+	$resultSuccess = "";
+	$resultError = "";
+	$errors = array();
 	
 	if (array_key_exists('add-film', $_POST)) {
 
-		$query = "INSERT INTO `films` (`title`, `genre`, `year`) VALUES (
-		'". mysqli_real_escape_string($link, $_POST['title']) ."',
-		'". mysqli_real_escape_string($link, $_POST['genre']) ."',
-		'". mysqli_real_escape_string($link, $_POST['year']) ."'
-		)";
+		if ( $_POST['title'] == '') {
+			$errors[] = "Название фильма не может быть пустым";
+		}
+		if ( $_POST['genre'] == '') {
+			$errors[] = "Название жанра не должно быть пустым";
+		}
+		if ( $_POST['year'] == '') {
+			$errors[] = "Заполните год выпуска, пожалуйста";
+		}
+		
+		if ( empty($errors)) {
+			$query = "INSERT INTO `films` (`title`, `genre`, `year`) VALUES (
+			'". mysqli_real_escape_string($link, $_POST['title']) ."',
+			'". mysqli_real_escape_string($link, $_POST['genre']) ."',
+			'". mysqli_real_escape_string($link, $_POST['year']) ."'
+			)";
 
-		if ( mysqli_query($link, $query) ) {
-		 	echo "<p>Фильм был успешно добавлен</p>";
-		 } else {
-		 	echo "<p>Что-то пошло не так. Попробуйте еще раз.</p>";
-		 }
-	}
-
-	// echo "<pre>";
-	// print_r($_POST);
-	// echo "<br>";
+			if ( mysqli_query($link, $query) ) {
+					$resultSuccess = "Фильм был успешно добавлен";
+				} else {
+				 	$resultError = "Что-то пошло не так. Попробуйте еще раз";
+				}
+			
+			}
+		}
 
 	$query = "SELECT * FROM `films`";
 	$films = array();
@@ -34,11 +47,8 @@
 
 		while ( $row = mysqli_fetch_array($result) ) {
 			$films[] = $row;
-
 		}
 	} 
-	
-	
 ?>
 
 <!-- Разные миксины по одному, которые понадобятся. Для логотипа, бейджа, и т.д.-->
@@ -61,7 +71,22 @@
 </head>
 <body class="index-page">
 	<div class="container user-content section-page">
+
+
+		<?php 
+
+		if ( $resultSuccess != '' ) { ?>
+			<div class="info-success"><?=$resultSuccess?></div>
+		<?php 
+		}	?>
+		<?php 
+		if ( $resultError != '' ) { ?>
+			<div class="notify notify--error"><?=$resultError?></div>
+		<?php 
+		}	?>	
+
 		<div class="title-1">Фильмотека</div>
+		
 		<?php 
 			foreach ($films as $key => $film) { ?>
 		<div class="card mb-20">
@@ -79,7 +104,15 @@
 		<div class="panel-holder mt-80 mb-40">
 			<div class="title-3 mt-0">Добавить фильм</div>
 			<form action="index.php" method="POST">
-				<div class="notify notify--error mb-20 invisible">Название фильма не может быть пустым.</div>
+				<?php 
+				if ( !empty($errors)) {
+					foreach ($errors as $key => $value) {
+						echo "<div class='notify notify--error mb-20'>$value</div>";
+					}
+				}
+				 ?>
+
+				
 				<div class="form-group"><label class="label">Название фильма<input class="input" name="title" type="text" placeholder="Такси 2" /></label></div>
 				<div class="row">
 					<div class="col">
