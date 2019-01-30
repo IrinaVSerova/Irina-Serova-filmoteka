@@ -6,10 +6,27 @@
 		die("Ошибка подключения к базе данных.");
 	}
 
-	$resultSuccess = "";
-	$resultError = "";
-	$errors = array();
 	
+
+	$errors = array();
+
+	if ( @$_GET['action'] == 'delete' ) {
+
+		$query = "DELETE FROM films WHERE id = 
+		' " . mysqli_real_escape_string($link, $_GET['id']) . " ' LIMIT 1";
+
+		mysqli_query($link, $query);
+
+		mysqli_affected_rows($link);
+
+		if ( mysqli_affected_rows($link) > 0) {
+			$resultinfo = "Фильм был удален!";
+		} 
+		else {
+			$resultError = "Что-то пошло не так.";
+		}
+	}
+
 	if (array_key_exists('add-film', $_POST)) {
 
 		if ( $_POST['title'] == '') {
@@ -75,22 +92,35 @@
 
 		<?php 
 
-		if ( $resultSuccess != '' ) { ?>
+		if ( @$resultinfo != '' ) { ?>
+			<div class="info-notification"><?=$resultinfo?></div>
+		<?php 
+		}	?>
+		<?php 
+
+		if ( @$resultSuccess != '' ) { ?>
 			<div class="info-success"><?=$resultSuccess?></div>
 		<?php 
 		}	?>
 		<?php 
-		if ( $resultError != '' ) { ?>
+		if ( @$resultError != '' ) { ?>
 			<div class="notify notify--error"><?=$resultError?></div>
 		<?php 
-		}	?>	
+		}	?>
 
 		<div class="title-1">Фильмотека</div>
 		
 		<?php 
 			foreach ($films as $key => $film) { ?>
 		<div class="card mb-20">
-			<h4 class="title-4"><?=$films[$key]['title']?></h4>
+			<div class="card__header">
+				<h4 class="title-4"><?=$films[$key]['title']?></h4>
+				<div>
+					<a href="edit.php?id=<?=$films[$key]['id']?>" class="button button--editsmall ">Редактировать</a>
+					<a href="?action=delete&id=<?=$films[$key]['id']?>" class="button button--removesmall">Удалить</a>
+				</div>
+				
+			</div>
 			<div class="badge"><?=$films[$key]['genre']?></div>
 			<div class="badge"><?=$films[$key]['year']?></div>
 		</div>
@@ -111,8 +141,7 @@
 					}
 				}
 				 ?>
-
-				
+								
 				<div class="form-group"><label class="label">Название фильма<input class="input" name="title" type="text" placeholder="Такси 2" /></label></div>
 				<div class="row">
 					<div class="col">
