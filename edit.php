@@ -8,25 +8,29 @@
 
 	$errors = array();
 
-	if ( empty($errors)) {
-			$query = " UPDATE `films` 
-				SET title = '". mysqli_real_escape_string($link, $_POST['title']) ."',
-					genre = '". mysqli_real_escape_string($link, $_POST['genre']) ."', 
-					year = '". mysqli_real_escape_string($link, $_POST['year']) ."'
-					WHERE id = ".mysqli_real_escape_string($link, $_GET['id'])." LIMIT 1";
-
-		}
 		// mysqli_query($link, $query);
 
 		// mysqli_affected_rows($link);
 
 	$query = "SELECT * FROM `films` WHERE id = 
-	' " . mysqli_real_escape_string($link, $_GET['id']) . " ' LIMIT 1";
-	if ( $result = mysqli_query($link, $query) ) {
-		$film = mysqli_fetch_array($result);
-	};
+		' " . mysqli_real_escape_string($link, $_GET['id']) . " ' LIMIT 1";
+		if ( $result = mysqli_query($link, $query) ) {
+			$film = mysqli_fetch_array($result);
+		};
 
 	if (array_key_exists('update-film', $_POST)) {
+		if ( empty($errors)) {
+			$query = " UPDATE `films` 
+				SET title = '". mysqli_real_escape_string($link, $_POST['title']) ."',
+					genre = '". mysqli_real_escape_string($link, $_POST['genre']) ."', 
+					year = '". mysqli_real_escape_string($link, $_POST['year']) ."'
+					WHERE id = ".mysqli_real_escape_string($link, $_GET['id'])." LIMIT 1";
+		if ( mysqli_query($link, $query) ) {
+				$resultSuccess = "Фильм был успешно добавлен";
+			} else {
+			 	$resultError = "Что-то пошло не так. Попробуйте еще раз";
+			}
+		}
 
 		if ( $_POST['title'] == '') {
 			$errors[] = "Название фильма не может быть пустым";
@@ -38,11 +42,7 @@
 			$errors[] = "Заполните год выпуска, пожалуйста";
 		}
 	}
-	if ( mysqli_query($link, $query) ) {
-				$resultSuccess = "Фильм был успешно добавлен";
-			} else {
-			 	$resultError = "Что-то пошло не так. Попробуйте еще раз";
-			}
+	
 	if ( @$_GET['action'] == 'delete' ) {
 
 		$query = "DELETE FROM films WHERE id = 
@@ -114,7 +114,7 @@
 					</div>				
 				</div>
 				<input class="button" type="submit" name="update-film" value="Обновить информацию"/>
-				<a href="edit.php" class="button button--edit">Вернуться на главную</a>
+				<a href="index.php" class="button button--edit">Вернуться на главную</a>
 			</form>
 		</div>
 	</div><!-- build:jsLibs js/libs.js -->
