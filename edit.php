@@ -12,11 +12,11 @@
 
 		// mysqli_affected_rows($link);
 
-	$query = "SELECT * FROM `films` WHERE id = 
-		' " . mysqli_real_escape_string($link, $_GET['id']) . " ' LIMIT 1";
-		if ( $result = mysqli_query($link, $query) ) {
-			$film = mysqli_fetch_array($result);
-		};
+	// $query = "SELECT * FROM `films` WHERE id = 
+	// 	' " . mysqli_real_escape_string($link, $_GET['id']) . " ' LIMIT 1";
+	// 	if ( $result = mysqli_query($link, $query) ) {
+	// 		$film = mysqli_fetch_array($result);
+	// 	};
 
 	if (array_key_exists('update-film', $_POST)) {
 		if ( empty($errors)) {
@@ -26,12 +26,12 @@
 					year = '". mysqli_real_escape_string($link, $_POST['year']) ."'
 					WHERE id = ".mysqli_real_escape_string($link, $_GET['id'])." LIMIT 1";
 		if ( mysqli_query($link, $query) ) {
-				$resultSuccess = "Фильм был успешно добавлен";
+				$resultinfo = "Фильм был успешно обновлен";
 			} else {
 			 	$resultError = "Что-то пошло не так. Попробуйте еще раз";
 			}
 		}
-
+		
 		if ( $_POST['title'] == '') {
 			$errors[] = "Название фильма не может быть пустым";
 		}
@@ -42,23 +42,29 @@
 			$errors[] = "Заполните год выпуска, пожалуйста";
 		}
 	}
-	
-	if ( @$_GET['action'] == 'delete' ) {
 
-		$query = "DELETE FROM films WHERE id = 
+	$query = "SELECT * FROM `films` WHERE id = 
 		' " . mysqli_real_escape_string($link, $_GET['id']) . " ' LIMIT 1";
+		if ( $result = mysqli_query($link, $query) ) {
+			$film = mysqli_fetch_array($result);
+		};
 
-		mysqli_query($link, $query);
+	// if ( @$_GET['action'] == 'delete' ) {
 
-		mysqli_affected_rows($link);
+	// 	$query = "DELETE FROM films WHERE id = 
+	// 	' " . mysqli_real_escape_string($link, $_GET['id']) . " ' LIMIT 1";
 
-		if ( mysqli_affected_rows($link) > 0) {
-			$resultinfo = "Фильм был удален!";
-		} 
-		else {
-			$resultError = "Что-то пошло не так.";
-		}
-	}
+	// 	mysqli_query($link, $query);
+
+	// 	mysqli_affected_rows($link);
+
+	// 	if ( mysqli_affected_rows($link) > 0) {
+	// 		$resultinfo = "Фильм был удален!";
+	// 	} 
+	// 	else {
+	// 		$resultError = "Что-то пошло не так.";
+	// 	}
+	// }
 ?>
 
 <!-- Разные миксины по одному, которые понадобятся. Для логотипа, бейджа, и т.д.-->
@@ -83,8 +89,8 @@
 	<div class="container user-content section-page">
 		<?php 
 
-		if ( @$resultSuccess != '' ) { ?>
-			<div class="info-success"><?=$resultSuccess?></div>
+		if ( @$resultinfo != '' ) { ?>
+			<div class="info-notification"><?=$resultinfo?></div>
 		<?php 
 		}	?>
 		<?php 
