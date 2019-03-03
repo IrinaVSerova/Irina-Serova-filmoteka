@@ -1401,11 +1401,9 @@ ul.admin-nav {
   justify-content: flex-start;
 }
 a.admin-nav__link {
-  display: block;
   text-decoration: none;
   padding: 5px;
   margin-right: 25px;
-  color: #383737;
   -webkit-transition: color, 1s;
   -o-transition: color, 1s;
   transition: color, 1s;
