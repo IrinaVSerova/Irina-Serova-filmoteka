@@ -20,6 +20,8 @@
 		</div>
 		<textarea class="textarea mb-20" name="description" placeholder="Введите описание фильма"></textarea>
 		<div class="mb-20">
+			<label class="label-title">Изображение</label>
+			<p>Изображение jpg или png, рекомендуемая ширина 945px и больше, высота от 400рх и более, вес до 2Мб.</p>
 			<input type="file" name="photo">
 		</div>
 		<input class="button" type="submit" name="add-film" value="Добавить" />
