@@ -20,7 +20,7 @@
 		}
 
 		if ( empty($errors)) {
-			$result = film_new($link, $_POST['title'], $_POST['genre'], $_POST['year'], $_POST['description']);
+			$result = film_new($link, $_POST['title'], $_POST['genre'], $_POST['year'], $_POST['description'], $_FILES['photo']);
 
 			if ($result) {
 				$resultSuccess = "Фильм был успешно добавлен!";
